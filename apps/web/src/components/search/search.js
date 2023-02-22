@@ -20,13 +20,13 @@ import { store } from "../../stores/note-store";
 import { db } from "../../common/db";
 import { filter, parse } from "liqe";
 
-export const mainSearchEngine = async (searchType, value) => {
+export const mainSearchEngine = async (filter, query) => {
   //name is cumbersome
   // better name? fetchResults
   const context = store.context;
-  const [lookupType, allData] = await filterItemsToType(searchType, context);
+  const [lookupType, allData] = await filterItemsToType(filter, context);
   if (lookupType !== undefined && allData !== undefined) {
-    let result = await db.lookup[lookupType](allData, value);
+    let result = await db.lookup[lookupType](allData, query);
     return { result, allData };
   } else {
     return { result: [], allData: [] };
@@ -65,7 +65,7 @@ const beginSearch = async (definition, type) => {
   console.log("beginSearch", definition);
   let notes = [];
   type = type.trim();
-
+  db.notebooks.notebook();
   switch (type) {
     case "notebook": {
       console.log("beginSearch", definition.topics);
