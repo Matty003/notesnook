@@ -34,6 +34,13 @@ export function onBackspacePressed(
 ) {
   const { selection } = editor.state;
   const { empty, $from } = selection;
+
+  if (
+    editor.state.doc.childBefore($from.pos).node?.type.name !== "taskList" &&
+    editor.state.doc.childBefore($from.pos - 2).node?.type.name === "taskList"
+  )
+    editor.commands.joinBackward();
+
   if (
     !empty ||
     !isInside(name, type, editor.state) ||
