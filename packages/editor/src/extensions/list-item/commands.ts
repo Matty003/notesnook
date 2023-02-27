@@ -36,12 +36,6 @@ export function onBackspacePressed(
   const { empty, $from } = selection;
 
   if (
-    editor.state.doc.childBefore($from.pos).node?.type.name !== "taskList" &&
-    editor.state.doc.childBefore($from.pos - 2).node?.type.name === "taskList"
-  )
-    editor.commands.joinBackward();
-
-  if (
     !empty ||
     !isInside(name, type, editor.state) ||
     $from.parentOffset !== 0 ||
@@ -59,12 +53,11 @@ export function onBackspacePressed(
       if (parentList.childCount > 1) {
         return editor.commands.liftListItem(type);
       }
-      return editor.commands.deleteNode(parentList.type);
     }
 
-    return editor.commands.deleteNode(type);
+    return editor.chain().joinBackward().joinBackward().run();
   } else if (isFirstOfType(type, editor.state)) {
-    return false;
+    return editor.commands.liftListItem(type);
   } else {
     const block = findParentNodeOfType(type)(selection);
     if (block && block.start === $from.pos - 1) {
